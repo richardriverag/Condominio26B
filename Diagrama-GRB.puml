@@ -1,0 +1,51 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam usecase {
+  BackgroundColor #E1F5EE
+  BorderColor #0F6E56
+}
+
+' ---------- Actores ----------
+actor "Usuario" as Usu
+actor "Administrador" as Admin
+actor "Guardia" as Gua
+actor "Residente" as Res
+
+' ---------- Herencia de Actores ----------
+Usu <|-- Admin
+Usu <|-- Gua
+Usu <|-- Res
+
+' ---------- Límite del sistema ----------
+rectangle "GRB: Gestión de Usuarios y Administradores" {
+  usecase "iniciarSesión" as CU01
+  usecase "reestablecerContraseña" as CU02
+  usecase "registrarUsuario" as CU03
+  usecase "actualizarUsuario" as CU04
+  usecase "consultarUsuario" as CU05
+  usecase "actualizarRolDeUsuario" as CU06
+  usecase "actualizarPermisos" as CU07
+  usecase "actualizarDatosPersonales" as CU08
+}
+
+' ---------- Asociaciones ----------
+Usu --> CU01
+Usu --> CU02
+Admin --> CU03
+Admin --> CU04
+Admin --> CU05
+Gua --> CU05
+
+' ---------- <<extend>> ----------
+CU04 <.. CU06 : <<extend>>
+CU04 <.. CU07 : <<extend>>
+CU04 <.. CU08 : <<extend>>
+
+' ---------- <<include>> ----------
+CU02 .> CU01 : <<include>>
+CU04 .> CU01 : <<include>>
+
+@enduml
