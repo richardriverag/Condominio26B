@@ -1,0 +1,73 @@
+@startuml
+title Casos de uso del módulo GRF: Módulo de Comunicación
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+' Estilo de color para el módulo GRF (Azul pastel limpio)
+skinparam usecase {
+    BackgroundColor #E3F2FD
+    BorderColor #5C9CE6
+    FontColor #000000
+    ArrowColor #333333
+}
+
+skinparam actor {
+    BackgroundColor #F5F5F5
+    BorderColor #555555
+}
+
+' ==========================================
+' 1. ACTORES Y GENERALIZACIÓN
+' ==========================================
+actor "Usuario" as usuario
+actor "Administrador" as admin
+actor "Residente" as residente
+actor "Trabajador" as trabajador
+
+admin --|> usuario
+residente --|> usuario
+trabajador --|> usuario
+
+' ==========================================
+' 2. GRF: MÓDULO DE COMUNICACIÓN
+' ==========================================
+rectangle "GRF: Módulo de Comunicación" {
+
+    usecase "GRF-CU01\nEnviar mensajes\na residentes" as GRF_CU01
+    usecase "GRF-CU02\nEnviar comunicados\na trabajadores" as GRF_CU02
+    usecase "GRF-CU03\nEnviar mensajes\nglobales" as GRF_CU03
+    usecase "GRF-CU04\nEnviar mensajes\ndirectos" as GRF_CU04
+    usecase "GRF-CU05\nCrear reporte" as GRF_CU05
+    usecase "GRF-CU06\nModificar anuncios\ngenerales" as GRF_CU06
+    usecase "GRF-CU07\nEliminar anuncios\ngenerales" as GRF_CU07
+
+    ' Casos de uso de soporte
+    usecase "GRF-CU08\nNotificar a los\ndestinatarios" as GRF_CU08
+    usecase "GRF-CU09\nAdjuntar evidencia" as GRF_CU09
+
+    ' Relaciones <<include>> (Base ..> Obligatorio)
+    GRF_CU01 ..> GRF_CU08 : <<include>>
+    GRF_CU02 ..> GRF_CU08 : <<include>>
+    GRF_CU03 ..> GRF_CU08 : <<include>>
+    GRF_CU04 ..> GRF_CU08 : <<include>>
+
+    ' Relación <<extend>> (Base <.. Opcional)
+    GRF_CU05 <.. GRF_CU09 : <<extend>>
+}
+
+' ==========================================
+' 3. ASOCIACIONES CON FLECHAS DIRECCIONALES
+' ==========================================
+admin --> GRF_CU01
+admin --> GRF_CU02
+admin --> GRF_CU03
+admin --> GRF_CU06
+admin --> GRF_CU07
+
+usuario --> GRF_CU04
+usuario --> GRF_CU05
+
+@enduml
+
