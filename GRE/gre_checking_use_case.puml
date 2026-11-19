@@ -5,3 +5,44 @@ skinparam packageStyle rectangle
 actor "Guardia" as Guardia
 actor "Residente" as Residente
 actor "Administrador" as Admin
+
+package "Módulo de Check-in" {
+  usecase "Registrar entrada de visitante\n(fecha, hora, nombre, motivo)" as UC1
+  usecase "Asociar visitante a residente\ny destino/inmueble" as UC2
+  usecase "Programar llegada de visitante" as UC3
+  usecase "Notificar llegadas programadas" as UC4
+  usecase "Consultar registro histórico\nde llegadas" as UC5
+  usecase "Enviar alerta rápida de\nemergencia o simulacro" as UC6
+  usecase "Coordinar y asignar\nparqueadero de visita" as UC7
+  usecase "Configurar límite de\nparqueaderos de visita" as UC8
+}
+
+package "Dependencias Externas" {
+  usecase "Consultar usuario / rol /\ncontacto de emergencia (GRB)" as EXT_GRB
+  usecase "Consultar inmueble asociado (GRC)" as EXT_GRC
+  usecase "Difundir avisos y alertas (GRF)" as EXT_GRF
+}
+
+Guardia --> UC1
+Guardia --> UC5
+Guardia --> UC6
+Guardia --> UC7
+
+Residente --> UC3
+Residente --> UC5
+
+Admin --> UC5
+Admin --> UC6
+Admin --> UC8
+
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC7 : <<include>>
+UC3 ..> UC4 : <<include>>
+
+UC2 ..> EXT_GRB : <<include>>
+UC2 ..> EXT_GRC : <<include>>
+UC4 ..> EXT_GRF : <<include>>
+UC6 ..> EXT_GRF : <<include>>
+UC6 ..> EXT_GRB : <<include>>
+
+@enduml
