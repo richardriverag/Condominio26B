@@ -27,3 +27,17 @@ Rel(guardia, checkin_controller, "Registra llegada de visitantes y asigna parque
 Rel(guardia, alertas_service, "Dispara alerta rápida de emergencia o simulacro", "HTTPS / JSON")
 Rel(residente, checkin_controller, "Programa llegadas anticipadas y consulta visitas", "HTTPS / JSON")
 Rel(administrador, checkin_controller, "Configura límite de parqueaderos y audita historial", "HTTPS / JSON")
+
+Rel(checkin_controller, registro_visitas, "Delega registro y consulta de visitas", "Llamada interna")
+Rel(checkin_controller, parqueaderos_service, "Solicita disponibilidad y asignación de cupo", "Llamada interna")
+Rel(checkin_controller, alertas_service, "Solicita envío de aviso o alerta", "Llamada interna")
+Rel(registro_visitas, historial_db, "Guarda y consulta registro histórico de llegadas", "SQL")
+Rel(parqueaderos_service, historial_db, "Actualiza estado y cupos de parqueaderos", "SQL")
+
+' Relaciones con otros grupos a futuro
+Rel(registro_visitas, modulo_grb, "Consulta residente por nombre/ID y valida rol de Guardia", "API / REST")
+Rel(registro_visitas, modulo_grc, "Verifica inmueble asociado al residente visitado", "API / REST")
+Rel(alertas_service, modulo_grb, "Consulta contactos de emergencia registrados", "API / REST")
+Rel(alertas_service, modulo_grf, "Envía notificaciones de llegadas y alertas rápidas globales", "Mensajería / Eventos")
+
+@enduml
