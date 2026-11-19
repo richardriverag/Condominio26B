@@ -17,3 +17,13 @@ Container_Boundary(modulo_gre, "Contenedor: Módulo de Check-in") {
     Component(alertas_service, "Gestor de Alertas y Coordinación", "Servicio de Eventos", "Orquesta notificaciones de llegadas programadas y activa alertas rápidas de emergencia o simulacro.")
     Component(historial_db, "Repositorio Histórico de Llegadas", "Base de Datos Relacional", "Almacena el registro histórico de todas las entradas, visitantes y uso de parqueaderos.")
 }
+
+' Módulos externos del sistema que interactuan con nuestro grupo
+System_Ext(modulo_grb, "Módulo de Usuarios (GRB)", "Provee validación de identidad, consulta de usuarios (nombre, ID, rol) y contactos de emergencia.")
+System_Ext(modulo_grc, "Módulo de Inmuebles (GRC)", "Provee la relación entre residentes y sus departamentos, suites o locales comerciales.")
+System_Ext(modulo_grf, "Módulo de Comunicación (GRF)", "Canal de envío de notificaciones a residentes/guardias y difusión de alertas globales de emergencia.")
+
+Rel(guardia, checkin_controller, "Registra llegada de visitantes y asigna parqueaderos", "HTTPS / JSON")
+Rel(guardia, alertas_service, "Dispara alerta rápida de emergencia o simulacro", "HTTPS / JSON")
+Rel(residente, checkin_controller, "Programa llegadas anticipadas y consulta visitas", "HTTPS / JSON")
+Rel(administrador, checkin_controller, "Configura límite de parqueaderos y audita historial", "HTTPS / JSON")
