@@ -1,2 +1,11 @@
 @startuml gre_checkin_component
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagrama de Componentes (Nivel 3) - Módulo de Check-in (GRE)
+
+' Por confirmar los actores del grupo GRB
+Person(guardia, "Guardia", "Personal de seguridad encargado de registrar el ingreso de visitantes y asignar parqueaderos.")
+Person(residente, "Residente", "Habitante del condominio que recibe visitas, programa llegadas y recibe notificaciones.")
+Person(administrador, "Administrador", "Gestiona la configuración de capacidad de parqueaderos y consulta historiales/emergencias.")
