@@ -1,0 +1,7 @@
+@startuml gre_checkin_use_case
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Guardia" as Guardia
+actor "Residente" as Residente
+actor "Administrador" as Admin
