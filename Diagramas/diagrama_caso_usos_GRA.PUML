@@ -1,0 +1,46 @@
+@startuml
+
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+title GRA - Módulo de Pagos y Finanzas
+
+actor "Residente" as Residente
+actor "Entidad Bancaria" as Banco
+
+rectangle  {
+
+    usecase "CU-01\nRegistrar Pago" as Registrar
+
+    usecase "Pago en Efectivo" as Efectivo
+    usecase "Pago con Tarjeta\nde Crédito" as Credito
+    usecase "Pago con Tarjeta\nde Débito" as Debito
+    usecase "Transferencia\nBancaria" as Transferencia
+    usecase "Pago en Cuotas" as Cuotas
+
+    usecase "CU-02\nConsultar Estado de Cuenta\ne Historial de Pagos" as Estado
+
+    usecase "Actualizar Estado\nde Cuenta" as Actualizar
+
+    usecase "Procesar Pago\nElectrónico" as Procesar
+}
+
+Residente --> Registrar
+Residente --> Estado
+
+Efectivo -|> Registrar
+Credito -|> Registrar
+Debito -|> Registrar
+Transferencia -|> Registrar
+Cuotas -|> Registrar
+
+Registrar ..> Actualizar : <<include>>
+
+Credito ..> Procesar : <<include>>
+Debito ..> Procesar : <<include>>
+Transferencia ..> Procesar : <<include>>
+
+Banco --> Procesar
+
+@enduml
