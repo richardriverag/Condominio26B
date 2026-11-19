@@ -9,3 +9,11 @@ title Diagrama de Componentes (Nivel 3) - Módulo de Check-in (GRE)
 Person(guardia, "Guardia", "Personal de seguridad encargado de registrar el ingreso de visitantes y asignar parqueaderos.")
 Person(residente, "Residente", "Habitante del condominio que recibe visitas, programa llegadas y recibe notificaciones.")
 Person(administrador, "Administrador", "Gestiona la configuración de capacidad de parqueaderos y consulta historiales/emergencias.")
+
+Container_Boundary(modulo_gre, "Contenedor: Módulo de Check-in") {
+    Component(checkin_controller, "Controlador de Check-in", "API REST / Controlador", "Gestiona las peticiones de ingreso, validación y consulta de visitas.")
+    Component(registro_visitas, "Gestor de Registro de Visitantes", "Servicio de Negocio", "Registra entrada con fecha, hora, nombre, motivo y persona a visitar.")
+    Component(parqueaderos_service, "Gestor de Parqueaderos de Visita", "Servicio de Negocio", "Controla y asigna los cupos de parqueaderos de visita definidos por condominio.")
+    Component(alertas_service, "Gestor de Alertas y Coordinación", "Servicio de Eventos", "Orquesta notificaciones de llegadas programadas y activa alertas rápidas de emergencia o simulacro.")
+    Component(historial_db, "Repositorio Histórico de Llegadas", "Base de Datos Relacional", "Almacena el registro histórico de todas las entradas, visitantes y uso de parqueaderos.")
+}
