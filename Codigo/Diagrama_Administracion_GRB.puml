@@ -44,8 +44,4 @@ CU04 <.. CU06 : <<extend>>
 CU04 <.. CU07 : <<extend>>
 CU04 <.. CU08 : <<extend>>
 
-' ---------- <<include>> ----------
-CU02 .> CU01 : <<include>>
-CU04 .> CU01 : <<include>>
-
 @enduml
