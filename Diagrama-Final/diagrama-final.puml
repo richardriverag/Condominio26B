@@ -2,12 +2,10 @@
 top to bottom direction
 skinparam shadowing false
 skinparam packageStyle rectangle
-
-skinparam linetype ortho
-skinparam nodesep 14
-skinparam ranksep 28
+skinparam nodesep 16
+skinparam ranksep 65
 skinparam padding 6
-skinparam RoundCorner 8
+skinparam RoundCorner 6
 
 skinparam usecase {
   BackgroundColor #F4F9FF
@@ -30,195 +28,221 @@ skinparam package {
   FontSize 11
 }
 
-title Condominio26B - Arquitectura General de Casos de Uso
+title Condominio26B - Diagrama General de Casos de Uso
 
-' =========================================================
-' FILA SUPERIOR: JERARQUÍA DE ROLES CENTRADA ARRIBA
-' =========================================================
-package "Jerarquía de Roles del Sistema" as P_ROLES {
-  actor "Usuario" as U_Base
-  actor "Residente" as R_Base
-  actor "Propietario" as P_Base
-  actor "Guardia" as G_Base
-  actor "Mantenimiento" as M_Base
-  actor "Trabajador" as T_Base
-  actor "Administrador" as A_Base
+package "GRC - Inmuebles" as P_GRC {
+  usecase "GRC-CU09\nConsultar disp." as GRC9
+  usecase "GRC-CU10\nAvisos/recordatorios" as GRC10
+  usecase "GRC-CU13\nPago de reserva" as GRC13
 
-  R_Base -up-|> U_Base
-  P_Base -up-|> U_Base
-  G_Base -up-|> U_Base
-  M_Base -up-|> U_Base
-  T_Base -up-|> U_Base
-  A_Base -up-|> U_Base
+  usecase "GRC-CU07\nRegistrar reparación" as GRC7
+  usecase "GRC-CU03\nAsignar propiedad" as GRC3
+  usecase "GRC-CU04\nConsultar catálogo" as GRC4
+  usecase "GRC-CU05\nReservar inmueble" as GRC5
+  usecase "GRC-CU06\nReprogramar agenda" as GRC6
+
+  usecase "GRC-CU01\nAdministrar inmuebles" as GRC1
+  usecase "GRC-CU02\nActualizar catálogo" as GRC2
+  usecase "GRC-CU08\nReporte de cambios" as GRC8
+
+  GRC9 -[hidden]right-> GRC10
+  GRC10 -[hidden]right-> GRC13
+  GRC7 -[hidden]right-> GRC3
+  GRC3 -[hidden]right-> GRC4
+  GRC4 -[hidden]right-> GRC5
+  GRC5 -[hidden]right-> GRC6
+  GRC1 -[hidden]right-> GRC2
+  GRC2 -[hidden]right-> GRC8
+
+  GRC9 -[hidden]down-> GRC3
+  GRC4 -[hidden]down-> GRC1
+
+  GRC5 .up.> GRC9 : <<include>>
+  GRC6 .up.> GRC9 : <<include>>
+  GRC5 .up.> GRC10 : <<include>>
+  GRC6 .up.> GRC10 : <<include>>
+  GRC7 .up.> GRC10 : <<include>>
+  GRC5 <.up. GRC13 : <<extend>>
 }
 
-' =========================================================
-' FILA MEDIA: 3 MÓDULOS ALINEADOS (GRB | GRE | GRD)
-' =========================================================
-together {
-  package "GRB - Usuarios y Acceso" as P_GRB {
-    actor "Usuario" as U_GRB
-    actor "Admin" as A_GRB
+package "GRA - Pagos y Finanzas" as P_GRA {
+  usecase "GRA-CU03\nActualizar cuenta" as GRA3
+  usecase "GRA-CU04\nPago electrónico" as GRA4
+  usecase "GRA-CU02\nConsultar deuda" as GRA2
+  usecase "GRA-CU01\nRegistrar pago" as GRA1
 
-    usecase "GRB-CU01\nAutenticarse" as GRB1
-    usecase "GRB-CU03\nConsultar perfil,\nrol y emergencia" as GRB3
-    usecase "GRB-CU02\nGestionar usuarios\ny roles" as GRB2
+  GRA3 -[hidden]right-> GRA4
+  GRA2 -[hidden]right-> GRA1
+  GRA3 -[hidden]down-> GRA2
 
-    U_GRB --> GRB1
-    U_GRB --> GRB3
-    A_GRB --> GRB2
-  }
-
-  package "GRE - Check-in" as P_GRE {
-    actor "Guardia" as G_GRE
-    actor "Residente" as R_GRE
-    actor "Admin" as A_GRE
-
-    usecase "GRE-CU01\nRegistrar entrada\nde visitante" as GRE1
-    usecase "GRE-CU02\nAsociar visitante\na residente/inmueble" as GRE2
-    usecase "GRE-CU07\nAsignar parqueadero\nde visita" as GRE7
-    usecase "GRE-CU03\nProgramar llegada" as GRE3
-    usecase "GRE-CU04\nNotificar llegada\nprogramada" as GRE4
-    usecase "GRE-CU05\nVer historial\nde llegadas" as GRE5
-    usecase "GRE-CU06\nAlerta rápida\nemergencia/simulacro" as GRE6
-    usecase "GRE-CU08\nConfigurar límite\nde parqueaderos" as GRE8
-
-    G_GRE --> GRE1
-    G_GRE --> GRE5
-    G_GRE --> GRE6
-    G_GRE --> GRE7
-
-    R_GRE --> GRE3
-    R_GRE --> GRE5
-
-    A_GRE --> GRE5
-    A_GRE --> GRE6
-    A_GRE --> GRE8
-
-    GRE1 ..> GRE2 : <<include>>
-    GRE1 ..> GRE7 : <<include>>
-    GRE3 ..> GRE4 : <<include>>
-  }
-
-  package "GRD - Reservas" as P_GRD {
-    actor "Residente" as R_GRD
-    actor "Admin" as A_GRD
-
-    usecase "GRD-CU02\nSolicitar reserva\nárea común" as GRD2
-    usecase "GRD-CU03\nCancelar reserva" as GRD3
-    usecase "GRD-CU04\nGestionar\ndisponibilidad" as GRD4
-    usecase "GRD-CU05\nAprobar/rechazar\nreserva" as GRD5
-    usecase "GRD-CU01\nVer disponibilidad" as GRD1
-
-    R_GRD --> GRD1
-    R_GRD --> GRD2
-    R_GRD --> GRD3
-
-    A_GRD --> GRD3
-    A_GRD --> GRD4
-    A_GRD --> GRD5
-
-    GRD2 ..> GRD1 : <<include>>
-    GRD4 ..> GRD1 : <<include>>
-  }
+  GRA1 .up.> GRA3 : <<include>>
+  GRA1 .up.> GRA4 : <<include>>
 }
 
-' =========================================================
-' FILA INFERIOR: 3 MÓDULOS ALINEADOS (GRA | GRC | GRF)
-' =========================================================
-together {
-  package "GRA - Pagos y Finanzas" as P_GRA {
-    actor "Residente" as R_GRA
-    actor "Banco" as B_GRA
+package "GRE - Check-in" as P_GRE {
+  usecase "GRE-CU04\nNotificar llegada" as GRE4
+  usecase "GRE-CU02\nAsociar visitante" as GRE2
+  usecase "GRE-CU07\nAsignar parqueadero" as GRE7
 
-    usecase "GRA-CU01\nRegistrar\npago" as GRA1
-    usecase "GRA-CU02\nConsultar estado\ny deuda" as GRA2
-    usecase "GRA-CU03\nActualizar estado\nde cuenta" as GRA3
-    usecase "GRA-CU04\nProcesar pago\nelectrónico" as GRA4
+  usecase "GRE-CU03\nProgramar llegada" as GRE3
+  usecase "GRE-CU05\nHistorial llegadas" as GRE5
+  usecase "GRE-CU06\nAlerta emergencia" as GRE6
+  usecase "GRE-CU08\nLímite parqueaderos" as GRE8
+  usecase "GRE-CU01\nRegistrar entrada" as GRE1
 
-    R_GRA --> GRA1
-    R_GRA --> GRA2
-    B_GRA --> GRA4
+  GRE4 -[hidden]right-> GRE2
+  GRE2 -[hidden]right-> GRE7
+  GRE3 -[hidden]right-> GRE5
+  GRE5 -[hidden]right-> GRE6
+  GRE6 -[hidden]right-> GRE8
+  GRE8 -[hidden]right-> GRE1
 
-    GRA1 ..> GRA3 : <<include>>
-    GRA1 ..> GRA4 : <<include>>
-  }
+  GRE4 -[hidden]down-> GRE3
+  GRE2 -[hidden]down-> GRE1
 
-  package "GRC - Inmuebles" as P_GRC {
-    actor "Residente" as R_GRC
-    actor "Propietario" as P_GRC_Act
-    actor "Mantenimiento" as M_GRC
-    actor "Admin" as A_GRC
-
-    usecase "GRC-CU01\nGestionar\ninmuebles" as GRC1
-    usecase "GRC-CU02\nGestionar\ncatálogo" as GRC2
-    usecase "GRC-CU03\nGestionar\npropiedad" as GRC3
-    usecase "GRC-CU04\nConsultar inmuebles\ny catálogo" as GRC4
-    usecase "GRC-CU05\nReservar/agendar\ninmueble" as GRC5
-    usecase "GRC-CU06\nCancelar/reprogramar\nagenda" as GRC6
-    usecase "GRC-CU07\nRegistrar evento\no reparación" as GRC7
-    usecase "GRC-CU08\nGenerar reporte\nde cambios" as GRC8
-    usecase "GRC-CU13\nRegistrar pago\nde reserva" as GRC13
-    usecase "GRC-CU09\nConsultar\ndisponibilidad" as GRC9
-    usecase "GRC-CU10\nGestionar avisos\ny recordatorios" as GRC10
-
-    R_GRC --> GRC4
-    R_GRC --> GRC5
-    R_GRC --> GRC6
-
-    P_GRC_Act --> GRC3
-    P_GRC_Act --> GRC4
-    P_GRC_Act --> GRC5
-    P_GRC_Act --> GRC6
-
-    M_GRC --> GRC7
-
-    A_GRC --> GRC1
-    A_GRC --> GRC2
-    A_GRC --> GRC3
-    A_GRC --> GRC7
-    A_GRC --> GRC8
-
-    GRC5 ..> GRC9 : <<include>>
-    GRC6 ..> GRC9 : <<include>>
-    GRC5 ..> GRC10 : <<include>>
-    GRC6 ..> GRC10 : <<include>>
-    GRC7 ..> GRC10 : <<include>>
-  }
-
-  package "GRF - Comunicación" as P_GRF {
-    actor "Usuario" as U_GRF
-    actor "Admin" as A_GRF
-
-    usecase "GRF-CU01\nMensaje a\nresidentes" as GRF1
-    usecase "GRF-CU02\nComunicado a\ntrabajadores" as GRF2
-    usecase "GRF-CU03\nMensaje\nglobal" as GRF3
-    usecase "GRF-CU04\nMensaje\ndirecto" as GRF4
-    usecase "GRF-CU05\nCrear\nreporte" as GRF5
-    usecase "GRF-CU09\nAdjuntar\nevidencia" as GRF9
-    usecase "GRF-CU06\nModificar anuncio\ngeneral" as GRF6
-    usecase "GRF-CU07\nEliminar anuncio\ngeneral" as GRF7
-    usecase "GRF-CU08\nNotificar a\ndestinatarios" as GRF8
-
-    U_GRF --> GRF4
-    U_GRF --> GRF5
-
-    A_GRF --> GRF1
-    A_GRF --> GRF2
-    A_GRF --> GRF3
-    A_GRF --> GRF6
-    A_GRF --> GRF7
-
-    GRF1 ..> GRF8 : <<include>>
-    GRF2 ..> GRF8 : <<include>>
-    GRF3 ..> GRF8 : <<include>>
-    GRF4 ..> GRF8 : <<include>>
-    GRF5 <.. GRF9 : <<extend>>
-  }
+  GRE3 .up.> GRE4 : <<include>>
+  GRE1 .up.> GRE2 : <<include>>
+  GRE1 .up.> GRE7 : <<include>>
 }
 
-' Anclas centrales limpias (arriba -> fila 1 -> fila 2)
-P_ROLES -[hidden]down-> P_GRE
-P_GRE -[hidden]down-> P_GRC
+actor "Mantenimiento" as M_Act
+actor "Propietario" as P_Act
+actor "Habitante" as H_Act
+actor "Residente" as R_Act
+actor "Banco" as B_Act
+actor "Admin" as A_Act
+actor "Operativo" as O_Act
+actor "Guardia" as G_Act
+actor "Trabajador" as T_Act
+actor "Usuario" as U_Base
 
+M_Act -[hidden]right-> P_Act
+P_Act -[hidden]right-> H_Act
+H_Act -[hidden]right-> R_Act
+R_Act -[hidden]right-> B_Act
+B_Act -[hidden]right-> A_Act
+A_Act -[hidden]right-> O_Act
+O_Act -[hidden]right-> G_Act
+G_Act -[hidden]right-> T_Act
+T_Act -[hidden]right-> U_Base
+
+P_Act -right-|> H_Act
+R_Act -left-|> H_Act
+
+A_Act -right-|> O_Act
+G_Act -left-|> O_Act
+
+M_Act -down-|> U_Base
+H_Act -down-|> U_Base
+O_Act -down-|> U_Base
+T_Act -down-|> U_Base
+
+M_Act -up-> GRC7
+P_Act -up-> GRC3
+H_Act -up-> GRC4
+H_Act -up-> GRC5
+H_Act -up-> GRC6
+A_Act -up-> GRC1
+A_Act -up-> GRC2
+A_Act -up-> GRC3
+A_Act -up-> GRC7
+A_Act -up-> GRC8
+
+GRC13 -right-|> GRA1
+
+B_Act -up-> GRA4
+R_Act -up-> GRA1
+R_Act -up-> GRA2
+
+R_Act -up-> GRE3
+U_Base -up-> GRE5
+O_Act -up-> GRE6
+A_Act -up-> GRE8
+G_Act -up-> GRE1
+G_Act -up-> GRE7
+
+package "GRD - Reservas" as P_GRD {
+  usecase "GRD-CU02\nSolicitar reserva" as GRD2
+  usecase "GRD-CU04\nConfigurar disp." as GRD4
+  usecase "GRD-CU00\nResolver reserva" as GRD0
+
+  usecase "GRD-CU03\nCancelar reserva" as GRD3
+  usecase "GRD-CU05\nAprobar/rechazar" as GRD5
+
+  GRD2 -[hidden]right-> GRD4
+  GRD4 -[hidden]right-> GRD0
+  GRD3 -[hidden]right-> GRD5
+  GRD0 -[hidden]down-> GRD5
+
+  GRD3 -up-|> GRD0
+  GRD5 -up-|> GRD0
+
+  GRD2 .up.> GRC9 : <<include>>
+  GRD4 .up.> GRC9 : <<include>>
+}
+
+package "GRF - Comunicación" as P_GRF {
+  usecase "GRF-CU00\nEmitir comunicado" as GRF0
+  usecase "GRF-CU10\nEditar anuncio" as GRF10
+  usecase "GRF-CU04\nMensaje directo" as GRF4
+  usecase "GRF-CU05\nCrear reporte" as GRF5
+
+  usecase "GRF-CU01\nMsg residentes" as GRF1
+  usecase "GRF-CU02\nCom. trabajadores" as GRF2
+  usecase "GRF-CU03\nMensaje global" as GRF3
+  usecase "GRF-CU06\nModificar anuncio" as GRF6
+  usecase "GRF-CU07\nEliminar anuncio" as GRF7
+  usecase "GRF-CU08\nNotificar destino" as GRF8
+  usecase "GRF-CU09\nAdjuntar evidencia" as GRF9
+
+  GRF0 -[hidden]right-> GRF10
+  GRF10 -[hidden]right-> GRF4
+  GRF4 -[hidden]right-> GRF5
+
+  GRF1 -[hidden]right-> GRF2
+  GRF2 -[hidden]right-> GRF3
+  GRF3 -[hidden]right-> GRF6
+  GRF6 -[hidden]right-> GRF7
+  GRF7 -[hidden]right-> GRF8
+  GRF8 -[hidden]right-> GRF9
+
+  GRF0 -[hidden]down-> GRF2
+  GRF10 -[hidden]down-> GRF6
+  GRF4 -[hidden]down-> GRF8
+  GRF5 -[hidden]down-> GRF9
+
+  GRF1 -up-|> GRF0
+  GRF2 -up-|> GRF0
+  GRF3 -up-|> GRF0
+
+  GRF6 -up-|> GRF10
+  GRF7 -up-|> GRF10
+
+  GRF0 .down.> GRF8 : <<include>>
+  GRF4 .down.> GRF8 : <<include>>
+  GRF5 <.down. GRF9 : <<extend>>
+}
+
+package "GRB - Usuarios, Acceso y Roles" as P_GRB {
+  usecase "GRB-CU02\nGestionar usuarios" as GRB2
+  usecase "GRB-CU01\nAutenticarse" as GRB1
+  usecase "GRB-CU03\nConsultar perfil/rol" as GRB3
+
+  GRB2 -[hidden]right-> GRB1
+  GRB1 -[hidden]right-> GRB3
+}
+
+R_Act -down-> GRD2
+R_Act -down-> GRD3
+A_Act -down-> GRD4
+A_Act -down-> GRD0
+
+A_Act -down-> GRF0
+A_Act -down-> GRF10
+U_Base -down-> GRF4
+U_Base -down-> GRF5
+
+A_Act -down-> GRB2
+U_Base -down-> GRB1
+U_Base -down-> GRB3
 @enduml
