@@ -1,0 +1,151 @@
+@startuml
+title Boceto anotado - Casos de uso del módulo GRC: Gestión de inmuebles
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #E1F5EE
+  BorderColor #0F6E56
+}
+skinparam note {
+  BackgroundColor #FAECE7
+  BorderColor #D85A30
+  FontSize 11
+}
+
+' ---------- Actores primarios ----------
+actor "Administrador" as Admin
+actor "Propietario" as Prop
+actor "Residente" as Res
+actor "Personal de\nmantenimiento" as Mant
+
+' ---------- Actores secundarios (sistemas externos) ----------
+actor "Módulo de Pagos\n(GRA)" <<system>> as GRA
+actor "Módulo de Comunicación\n(GRF)" <<system>> as GRF
+
+' ---------- Límite del sistema ----------
+rectangle "GRC: Gestión de inmuebles" {
+
+  usecase "CU01\nGestionar inmuebles" as CU01
+  usecase "CU02\nGestionar catálogo\ndel condominio" as CU02
+  usecase "CU03\nGestionar registro\nde propiedad" as CU03
+  usecase "CU04\nConsultar inmuebles\ny catálogo" as CU04
+  usecase "CU05\nReservar o agendar\ninmueble" as CU05
+  usecase "CU06\nCancelar o reprogramar\nagenda" as CU06
+  usecase "CU07\nRegistrar evento\nfortuito o reparación" as CU07
+  usecase "CU08\nGenerar reporte\nde cambios" as CU08
+
+  usecase "CU09\nConsultar disponibilidad" as CU09
+  usecase "CU10\nGestionar notificaciones\ny recordatorios" as CU10
+  usecase "CU11\nActualizar estado\ndel inmueble" as CU11
+  usecase "CU12\nMantener historial\nde cambios" as CU12
+  usecase "CU13\nRegistrar pago\nde reserva" as CU13
+}
+
+' ---------- Asociaciones ----------
+Admin -- CU01
+Admin -- CU02
+Admin -- CU03
+Admin -- CU07
+Admin -- CU08
+
+Prop -- CU03
+Prop -- CU04
+Prop -- CU05
+Prop -- CU06
+
+Res -- CU04
+Res -- CU05
+Res -- CU06
+
+Mant -- CU07
+
+GRA -- CU13
+GRF -- CU10
+
+' ---------- <<include>> ----------
+CU05 .> CU09 : <<include>>
+CU06 .> CU09 : <<include>>
+CU05 .> CU10 : <<include>>
+CU06 .> CU10 : <<include>>
+CU07 .> CU10 : <<include>>
+CU07 .> CU11 : <<include>>
+CU11 .> CU12 : <<include>>
+CU08 .> CU12 : <<include>>
+
+' ---------- <<extend>> ----------
+CU13 .> CU05 : <<extend>>
+note on link
+  Punto de extensión: Confirmar reserva
+  Condición: [la reserva requiere pago]
+end note
+
+' ---------- Anotaciones numeradas ----------
+note as N1
+  <b>(1) Precondición común</b>
+  Usuario autenticado con rol
+  adecuado (módulo GRB).
+  Repetir en cada especificación.
+end note
+
+note right of CU01
+  <b>(2)</b> Tipos: edificio, depto 2 o 3
+  dormitorios, suite, estudio, local.
+  Usar atributo "tipo", no un CU por tipo.
+end note
+
+note right of CU02
+  <b>(3)</b> Incluye áreas comunes:
+  punto de contacto con GRD.
+end note
+
+note right of CU03
+  <b>(4)</b> ¿Copropiedad (varios dueños)?
+  Guardar historial de traspasos.
+end note
+
+note right of CU05
+  <b>(5)</b> Regla: sin reservas solapadas
+  del mismo inmueble. Aclarar
+  "reservar" vs "agendar".
+end note
+
+note right of CU06
+  <b>(6)</b> Definir plazo de cancelación,
+  penalización y reembolso (GRA).
+end note
+
+note right of CU07
+  <b>(7)</b> Bloquea la agenda y dispara
+  reprogramación de reservas afectadas.
+end note
+
+note right of CU08
+  <b>(8)</b> Filtros: fechas, edificio, tipo,
+  tipo de cambio. Exportar PDF/Excel.
+end note
+
+note bottom of CU09
+  <b>(9)</b> Reutilizable desde GRD
+  para áreas comunes.
+end note
+
+note bottom of CU10
+  <b>(10)</b> Disparadores: reserva, cambio
+  de agenda, evento, reparación.
+  Recordatorios = tarea programada.
+end note
+
+note bottom of CU11
+  <b>(11)</b> Estados: disponible, reservado,
+  ocupado, en reparación,
+  fuera de servicio.
+end note
+
+note bottom of CU13
+  <b>(12)</b> Solo si la reserva genera cobro.
+  GRA ejecuta el pago; GRC registra
+  el resultado.
+end note
+@enduml
