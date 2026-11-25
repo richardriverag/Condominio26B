@@ -1,0 +1,43 @@
+@startuml gre_checkin_component
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagrama de Componentes (Nivel 3) - Módulo de Check-in (GRE)
+
+' Por confirmar los actores del grupo GRB
+Person(guardia, "Guardia", "Personal de seguridad encargado de registrar el ingreso de visitantes y asignar parqueaderos.")
+Person(residente, "Residente", "Habitante del condominio que recibe visitas, programa llegadas y recibe notificaciones.")
+Person(administrador, "Administrador", "Gestiona la configuración de capacidad de parqueaderos y consulta historiales/emergencias.")
+
+Container_Boundary(modulo_gre, "Contenedor: Módulo de Check-in") {
+    Component(checkin_controller, "Controlador de Check-in", "API REST / Controlador", "Gestiona las peticiones de ingreso, validación y consulta de visitas.")
+    Component(registro_visitas, "Gestor de Registro de Visitantes", "Servicio de Negocio", "Registra entrada con fecha, hora, nombre, motivo y persona a visitar.")
+    Component(parqueaderos_service, "Gestor de Parqueaderos de Visita", "Servicio de Negocio", "Controla y asigna los cupos de parqueaderos de visita definidos por condominio.")
+    Component(alertas_service, "Gestor de Alertas y Coordinación", "Servicio de Eventos", "Orquesta notificaciones de llegadas programadas y activa alertas rápidas de emergencia o simulacro.")
+    Component(historial_db, "Repositorio Histórico de Llegadas", "Base de Datos Relacional", "Almacena el registro histórico de todas las entradas, visitantes y uso de parqueaderos.")
+}
+
+' Módulos externos del sistema que interactuan con nuestro grupo
+System_Ext(modulo_grb, "Módulo de Usuarios (GRB)", "Provee validación de identidad, consulta de usuarios (nombre, ID, rol) y contactos de emergencia.")
+System_Ext(modulo_grc, "Módulo de Inmuebles (GRC)", "Provee la relación entre residentes y sus departamentos, suites o locales comerciales.")
+System_Ext(modulo_grf, "Módulo de Comunicación (GRF)", "Canal de envío de notificaciones a residentes/guardias y difusión de alertas globales de emergencia.")
+
+Rel(guardia, checkin_controller, "Registra llegada de visitantes y asigna parqueaderos", "HTTPS / JSON")
+Rel(guardia, alertas_service, "Dispara alerta rápida de emergencia o simulacro", "HTTPS / JSON")
+Rel(residente, checkin_controller, "Programa llegadas anticipadas y consulta visitas", "HTTPS / JSON")
+Rel(administrador, checkin_controller, "Configura límite de parqueaderos y audita historial", "HTTPS / JSON")
+
+Rel(checkin_controller, registro_visitas, "Delega registro y consulta de visitas", "Llamada interna")
+Rel(checkin_controller, parqueaderos_service, "Solicita disponibilidad y asignación de cupo", "Llamada interna")
+Rel(checkin_controller, alertas_service, "Solicita envío de aviso o alerta", "Llamada interna")
+Rel(registro_visitas, historial_db, "Guarda y consulta registro histórico de llegadas", "SQL")
+Rel(parqueaderos_service, historial_db, "Actualiza estado y cupos de parqueaderos", "SQL")
+
+' Relaciones con otros grupos a futuro
+Rel(registro_visitas, modulo_grb, "Consulta residente por nombre/ID y valida rol de Guardia", "API / REST")
+Rel(registro_visitas, modulo_grc, "Verifica inmueble asociado al residente visitado", "API / REST")
+Rel(alertas_service, modulo_grb, "Consulta contactos de emergencia registrados", "API / REST")
+Rel(alertas_service, modulo_grf, "Envía notificaciones de llegadas y alertas rápidas globales", "Mensajería / Eventos")
+
+@enduml
