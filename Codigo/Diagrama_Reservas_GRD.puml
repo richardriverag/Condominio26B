@@ -1,0 +1,31 @@
+@startuml
+title diagramaGRD
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #E1F5EE
+  BorderColor #0F6E56
+}
+' ---------- Actores ----------
+actor "Residente" as Res
+actor "Administrador" as Admin
+' ---------- Límite del sistema ----------
+rectangle "GRD: Reservas de espacios comunes" {
+  usecase "GRD-CU01\nVisualizar disponibilidad" as CU01
+  usecase "GRD-CU02\nSolicitar reserva\nde área común" as CU02
+  usecase "GRD-CU03\nCancelar reserva" as CU03
+  usecase "GRD-CU04\nGestionar disponibilidad" as CU04
+  usecase "GRD-CU05\nAprobar o rechazar\nsolicitud de reserva" as CU05
+}
+' ---------- Asociaciones ----------
+Res --> CU01
+Res --> CU02
+Res --> CU03
+Admin --> CU03
+Admin --> CU04
+Admin --> CU05
+' ---------- <<include>> ----------
+CU02 .> CU01 : <<include>>
+CU04 .> CU01 : <<include>>
+@enduml
